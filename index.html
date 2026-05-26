@@ -564,6 +564,39 @@ let stars = [], shooters = [], nightFrame, isNight = false, shooterInterval;
 let constellationFrame, constellationProgress = 0, constellationStars = [];
 let constellationRunning = false;
 
+// Constellation constants (must be before applyTheme call)
+const LETTERS = {
+  N: [
+    [[0,1],[0,0]],
+    [[0,0],[1,1]],
+    [[1,1],[1,0]]
+  ],
+
+  i: [
+    [[0.5,0],[0.5,0.08]],
+    [[0.5,0.2],[0.5,1]]
+  ],
+
+  c: [
+    [[1,0.15],[0.7,0],[0.2,0.15],[0,0.5],[0.2,0.85],[0.7,1],[1,0.85]]
+  ],
+
+  o: [
+    [[0.5,0],[0.15,0.15],[0,0.5],[0.15,0.85],[0.5,1],[0.85,0.85],[1,0.5],[0.85,0.15],[0.5,0]]
+  ],
+
+  l: [
+    [[0.3,0],[0.3,1],[0.8,1]]
+  ],
+
+  e: [
+    [[1,0],[0,0],[0,1],[1,1]],
+    [[0,0.5],[0.75,0.5]]
+  ]
+};
+const WORD = 'Nicole';
+const LETTER_W = 0.11, LETTER_H = 0.14, LETTER_GAP = 0.005;
+
 // Rain vars (declared early to avoid TDZ errors)
 let rainDrops = [], rainFrame, rainRunning = false, rainIntensity = 0;
 
@@ -722,20 +755,6 @@ function buildFireflies() {
 /* ════════════════════════════════
    CONSTELLATION — "Nicole"
 ════════════════════════════════ */
-// Letter stroke definitions for "Nicole" — normalized 0-1 coords
-// Each letter is an array of polylines (each polyline is array of [x,y])
-const LETTERS = {
-  N: [[[0,1],[0,0],[1,1],[1,0]]],
-  i: [[[0.5,0],[0.5,0.08]],[[0.5,0.18],[0.5,1]]],
-  c: [[[1,0.15],[0.6,0],[0,0.2],[0,0.8],[0.6,1],[1,0.85]]],
-  o: [[[0.5,0],[0,0.2],[0,0.8],[0.5,1],[1,0.8],[1,0.2],[0.5,0]]],
-  l: [[[0.3,0],[0.3,1],[0.8,1]]],
-  e: [[[1,0.3],[0,0.3],[0,0],[1,0]],[[0,0.3],[0,1],[1,1]],[[0,0.65],[0.8,0.65]]]
-};
-
-const WORD = 'Nicole';
-const LETTER_W = 0.11, LETTER_H = 0.14, LETTER_GAP = 0.005;
-
 function buildConstellation() {
   constellationStars = [];
   const totalW = WORD.length * (LETTER_W + LETTER_GAP) - LETTER_GAP;
@@ -764,6 +783,7 @@ function buildConstellation() {
 }
 
 function drawConstellation(t) {
+  if (!constellationRunning) { cCtx.clearRect(0,0,cCvs.width,cCvs.height); return; }
   cCtx.clearRect(0,0,cCvs.width,cCvs.height);
   if (!isNight) return;
   const time = t*0.001;
@@ -778,12 +798,49 @@ function drawConstellation(t) {
     const oy = startY;
     const strokes = LETTERS[ch]||[];
 
-    strokes.forEach(poly => {
-      const points = poly.map(([nx,ny]) => ({
-        x: (ox+nx*LETTER_W)*cCvs.width,
-        y: (oy+ny*LETTER_H)*cCvs.height
-      }));
+strokes.forEach(poly => {
+  const points = poly.map(([nx, ny]) => ({
+    x: (ox + nx * LETTER_W) * cCvs.width,
+    y: (oy + ny * LETTER_H) * cCvs.height
+  }));
 
+  // Draw connecting lines
+  cCtx.beginPath();
+  points.forEach((pt, i) => {
+    if (i === 0) cCtx.moveTo(pt.x, pt.y);
+    else cCtx.lineTo(pt.x, pt.y);
+  });
+
+  const alpha = 0.28 + 0.12 * Math.sin(time * 0.8 + li);
+
+  cCtx.strokeStyle = `rgba(200,180,255,${alpha})`;
+  cCtx.lineWidth = 1;
+  cCtx.stroke();
+
+  // Draw stars
+  points.forEach((pt, pi) => {
+    const twinkle = 0.5 + 0.5 * Math.sin(time * 2.5 + idx * 1.3);
+    const r = 1.8 + twinkle * 1.4;
+    const a = 0.55 + twinkle * 0.45;
+
+    const grd = cCtx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, r * 5);
+    grd.addColorStop(0, `rgba(220,200,255,${a * 0.6})`);
+    grd.addColorStop(0.4, `rgba(180,150,240,${a * 0.25})`);
+    grd.addColorStop(1, 'transparent');
+
+    cCtx.beginPath();
+    cCtx.arc(pt.x, pt.y, r * 5, 0, Math.PI * 2);
+    cCtx.fillStyle = grd;
+    cCtx.fill();
+
+    cCtx.beginPath();
+    cCtx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
+    cCtx.fillStyle = `rgba(240,230,255,${a})`;
+    cCtx.fill();
+
+    idx++;
+  });
+});
       // Draw connecting lines
       for (let pi=0;pi<points.length-1;pi++) {
         const a = points[pi], b = points[pi+1];
@@ -883,6 +940,7 @@ function makeRainDrop() {
 }
 
 function rainLoop() {
+  if (!rainRunning) return;
   rCtx.clearRect(0,0,rainCvs.width,rainCvs.height);
   rainDrops.forEach(d => {
     d.y += d.speed;
