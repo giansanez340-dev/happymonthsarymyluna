@@ -39,7 +39,87 @@
     pointer-events: none; z-index: 0; opacity: .6;
   }
 
-  /* Blobs */
+  /* ── LOGIN SCREEN ── */
+  #loginScreen {
+    position: fixed; inset: 0;
+    background: var(--cream);
+    z-index: 9999;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 2rem;
+    transition: opacity .8s ease, transform .8s ease;
+  }
+  #loginScreen.hide {
+    opacity: 0;
+    transform: scale(1.04);
+    pointer-events: none;
+  }
+  .login-blobs { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+  .login-blob  { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .35; }
+  .login-blob-1 { width:600px; height:500px; background:#e8c4a8; top:-150px; left:-200px; animation: drift1 18s ease-in-out infinite alternate; }
+  .login-blob-2 { width:500px; height:500px; background:#dbb89a; bottom:-100px; right:-150px; animation: drift2 22s ease-in-out infinite alternate; }
+
+  .login-box {
+    position: relative; z-index: 2;
+    text-align: center; max-width: 420px; width: 100%;
+  }
+  .login-petal { font-size: 2.5rem; margin-bottom: 1.2rem; animation: bob 3s ease-in-out infinite; display: block; }
+  .login-title {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(2.4rem, 8vw, 3.8rem);
+    color: var(--mocha-deep); margin-bottom: .5rem; line-height: 1.1;
+  }
+  .login-sub {
+    font-style: italic; font-size: 1.05rem;
+    color: var(--mocha); margin-bottom: 2.5rem; line-height: 1.8;
+  }
+  .login-hint {
+    font-size: .72rem; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 1rem; display: block;
+  }
+  .login-inputs {
+    display: flex; gap: .6rem; justify-content: center; margin-bottom: 1.2rem; flex-wrap: wrap;
+  }
+  .login-inputs input {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem; text-align: center;
+    background: rgba(255,255,255,.6);
+    border: 1px solid rgba(176,137,104,.35);
+    border-radius: 4px; color: var(--espresso);
+    padding: .55rem .5rem;
+    outline: none;
+    transition: border-color .3s, box-shadow .3s;
+  }
+  .login-inputs input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(176,137,104,.15);
+  }
+  #loginMonth { width: 70px; }
+  #loginDay   { width: 60px; }
+  #loginYear  { width: 80px; }
+
+  .login-btn {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem; letter-spacing: .18em; text-transform: uppercase;
+    background: linear-gradient(135deg, var(--mocha), var(--mocha-deep));
+    color: var(--cream); border: none; border-radius: 4px;
+    padding: .75rem 2.5rem; cursor: pointer;
+    box-shadow: 0 8px 24px -8px rgba(90,63,45,.4);
+    transition: transform .3s, box-shadow .3s;
+    width: 100%;
+  }
+  .login-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 32px -10px rgba(90,63,45,.45); }
+  .login-btn:active { transform: scale(.97); }
+
+  .login-error {
+    margin-top: .9rem; font-style: italic;
+    color: var(--rose); font-size: .95rem;
+    opacity: 0; transition: opacity .4s;
+    min-height: 1.4rem;
+  }
+  .login-error.show { opacity: 1; }
+
+  /* Blobs (main) */
   .blobs { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
   .blob  { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .35; }
   .blob-1 { width:700px; height:500px; background:#e8c4a8; top:-150px;  left:-200px; animation: drift1 18s ease-in-out infinite alternate; }
@@ -105,6 +185,39 @@
   @keyframes fade-up { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:none} }
   @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
 
+  /* ── COUNTDOWN ── */
+  .countdown-wrap {
+    text-align: center;
+  }
+  .countdown-grid {
+    display: flex; justify-content: center; gap: 1.2rem;
+    flex-wrap: wrap; margin: 2.5rem 0 1.5rem;
+  }
+  .cd-unit {
+    display: flex; flex-direction: column; align-items: center;
+    background: linear-gradient(145deg, rgba(255,255,255,.55), rgba(237,226,210,.4));
+    border: 1px solid rgba(176,137,104,.22);
+    border-radius: 8px;
+    padding: 1.4rem 1.6rem 1rem;
+    min-width: 90px;
+    box-shadow: 0 8px 24px -10px rgba(90,63,45,.2);
+  }
+  .cd-number {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(2.6rem, 6vw, 3.8rem);
+    color: var(--mocha-deep); line-height: 1; margin-bottom: .3rem;
+    transition: transform .2s ease;
+  }
+  .cd-number.tick { transform: scale(1.12); }
+  .cd-label {
+    font-size: .62rem; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--gold); font-weight: 300;
+  }
+  .cd-caption {
+    font-style: italic; color: var(--mocha);
+    font-size: 1.05rem; line-height: 1.85; max-width: 500px; margin: 0 auto;
+  }
+
   /* Divider */
   .divider {
     position:relative; z-index:2;
@@ -157,20 +270,14 @@
     font-size:1.05rem; line-height:1.85; max-width:600px;
   }
 
-  /* ── Envelopes ── */
-  .envelopes {
-    display:grid; grid-template-columns:repeat(2,1fr); gap:2.5rem 2rem;
-  }
-  .envelope-wrap {
-    display:flex; flex-direction:column; align-items:center; gap:.75rem;
-  }
+  /* Envelopes */
+  .envelopes { display:grid; grid-template-columns:repeat(2,1fr); gap:2.5rem 2rem; }
+  .envelope-wrap { display:flex; flex-direction:column; align-items:center; gap:.75rem; }
   .envelope {
     width:100%; max-width:320px; aspect-ratio:1.6/1;
     position:relative; cursor:pointer;
     perspective:1000px; user-select:none;
   }
-
-  /* back wall of envelope */
   .env-body {
     position:absolute; inset:0;
     background:linear-gradient(155deg,#eddcca,#d0b08e);
@@ -179,13 +286,11 @@
     box-shadow:0 12px 32px -10px rgba(90,63,45,.3), inset 0 1px 0 rgba(255,255,255,.35);
     overflow:hidden;
   }
-  /* bottom V fold */
   .env-body::before {
     content:''; position:absolute; bottom:0; left:0; right:0; height:54%;
     background:linear-gradient(168deg,#dfc9b0,#c8a07a);
     clip-path:polygon(0% 100%, 50% 0%, 100% 100%);
   }
-  /* side triangles */
   .env-body::after {
     content:''; position:absolute; inset:0;
     background:
@@ -195,8 +300,6 @@
     background-position:left bottom, right bottom;
     background-repeat:no-repeat;
   }
-
-  /* letter peeking out — sits behind flap */
   .env-letter {
     position:absolute; bottom:8%; left:8%; right:8%;
     height:44%; background:#fdf8f2;
@@ -213,8 +316,6 @@
     font-size:.85rem; color:var(--gold); letter-spacing:.05em;
   }
   .envelope.open .env-letter { transform:translateY(-58%); }
-
-  /* wax seal */
   .env-seal {
     position:absolute; bottom:10%; left:50%; transform:translateX(-50%);
     z-index:4; width:36px; height:36px;
@@ -226,8 +327,6 @@
     transition:transform .3s ease, opacity .4s ease;
   }
   .envelope.open .env-seal { opacity:0; pointer-events:none; }
-
-  /* flap — top triangle, folds open */
   .env-flap {
     position:absolute; top:0; left:0; right:0; height:54%;
     background:linear-gradient(172deg,#e8d2bc,#cba882);
@@ -238,7 +337,6 @@
     z-index:5;
   }
   .envelope.open .env-flap { transform:rotateX(-180deg); }
-
   .env-label {
     letter-spacing:.22em; text-transform:uppercase;
     font-size:.62rem; font-weight:300; color:var(--gold);
@@ -301,7 +399,7 @@
   .reveal { opacity:0; transform:translateY(36px); transition:opacity 1.1s ease,transform 1.1s ease; }
   .reveal.show { opacity:1; transform:none; }
 
-  /* ── Flower popup overlay ── */
+  /* Flower popup overlay */
   .f-overlay {
     position:fixed; inset:0;
     background:rgba(42,26,14,.52);
@@ -337,7 +435,7 @@
   .f-popup-rule { width:36px; height:1px; background:var(--gold); margin:0 auto .9rem; }
   .f-popup-msg { font-style:italic; font-size:1.12rem; color:var(--mocha); line-height:1.85; }
 
-  /* ── Poem modal ── */
+  /* Poem modal */
   .p-overlay {
     position:fixed; inset:0;
     background:rgba(42,26,14,.5);
@@ -385,10 +483,32 @@
     .flowers-grid { grid-template-columns:repeat(2,1fr); }
     .envelopes    { grid-template-columns:1fr; }
     .photo { width:155px; }
+    .cd-unit { min-width:70px; padding:1rem 1rem .8rem; }
   }
 </style>
 </head>
 <body>
+
+<!-- ══ LOGIN SCREEN ══ -->
+<div id="loginScreen">
+  <div class="login-blobs">
+    <div class="login-blob login-blob-1"></div>
+    <div class="login-blob login-blob-2"></div>
+  </div>
+  <div class="login-box">
+    <span class="login-petal">🌸</span>
+    <h1 class="login-title">For Nicole</h1>
+    <p class="login-sub">This little corner of the internet<br>was made just for you, babu.</p>
+    <span class="login-hint">Enter our special date to open</span>
+    <div class="login-inputs">
+      <input type="text" id="loginMonth" placeholder="MM" maxlength="2" inputmode="numeric" aria-label="Month" />
+      <input type="text" id="loginDay"   placeholder="DD" maxlength="2" inputmode="numeric" aria-label="Day" />
+      <input type="text" id="loginYear"  placeholder="YYYY" maxlength="4" inputmode="numeric" aria-label="Year" />
+    </div>
+    <button class="login-btn" id="loginBtn">Open ♡</button>
+    <p class="login-error" id="loginError">Hmm, that doesn't seem right. Try again, babu.</p>
+  </div>
+</div>
 
 <div class="blobs" aria-hidden="true">
   <div class="blob blob-1"></div>
@@ -403,6 +523,39 @@
   <h1 class="hero-name">Nicole M. Baybayon</h1>
   <p class="hero-sub">A gift, made with every quiet thought of you<br>and every word I wished I'd said sooner.</p>
   <div class="scroll-hint">Scroll down, my luna</div>
+</section>
+
+<!-- COUNTDOWN -->
+<div class="divider reveal"><span>✦</span></div>
+<section class="section reveal">
+  <div class="head">
+    <div class="kicker">Since April 17, 2026</div>
+    <h2>Us, in numbers</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="countdown-wrap">
+    <div class="countdown-grid">
+      <div class="cd-unit">
+        <span class="cd-number" id="cd-days">0</span>
+        <span class="cd-label">Days</span>
+      </div>
+      <div class="cd-unit">
+        <span class="cd-number" id="cd-hours">0</span>
+        <span class="cd-label">Hours</span>
+      </div>
+      <div class="cd-unit">
+        <span class="cd-number" id="cd-mins">0</span>
+        <span class="cd-label">Minutes</span>
+      </div>
+      <div class="cd-unit">
+        <span class="cd-number" id="cd-secs">0</span>
+        <span class="cd-label">Seconds</span>
+      </div>
+    </div>
+    <p class="cd-caption">
+      Every second with you is one I never want to take for granted.
+    </p>
+  </div>
 </section>
 
 <!-- FLOWERS -->
@@ -436,9 +589,8 @@
     Four letters, sealed just for you. Open each one when you're ready.
   </p>
   <div class="envelopes">
-
     <div class="envelope-wrap">
-      <div class="envelope" id="env-0" role="button" tabindex="0" aria-label="For you, Babu">
+      <div class="envelope" id="env-0" role="button" tabindex="0" aria-label="Open envelope 1">
         <div class="env-body"></div>
         <div class="env-letter"><span>for you ♡</span></div>
         <div class="env-seal">✦</div>
@@ -447,9 +599,8 @@
       <span class="env-label">For You, Babu</span>
       <span class="env-hint" id="hint-0">click to open</span>
     </div>
-
     <div class="envelope-wrap">
-      <div class="envelope" id="env-1" role="button" tabindex="0" aria-label="For you, Babu">
+      <div class="envelope" id="env-1" role="button" tabindex="0" aria-label="Open envelope 2">
         <div class="env-body"></div>
         <div class="env-letter"><span>for you ♡</span></div>
         <div class="env-seal">✦</div>
@@ -458,9 +609,8 @@
       <span class="env-label">For You, Babu</span>
       <span class="env-hint" id="hint-1">click to open</span>
     </div>
-
     <div class="envelope-wrap">
-      <div class="envelope" id="env-2" role="button" tabindex="0" aria-label="For you, Babu">
+      <div class="envelope" id="env-2" role="button" tabindex="0" aria-label="Open envelope 3">
         <div class="env-body"></div>
         <div class="env-letter"><span>for you ♡</span></div>
         <div class="env-seal">✦</div>
@@ -469,9 +619,9 @@
       <span class="env-label">For You, Babu</span>
       <span class="env-hint" id="hint-2">click to open</span>
     </div>
-
     <div class="envelope-wrap">
-      <div class="envelope" id="env-3" role="button" tabindex="0" aria-label="For you, Babu
+      <div class="envelope" id="env-3" role="button" tabindex="0" aria-label="Open envelope 4">
+        <div class="env-body"></div>
         <div class="env-letter"><span>for you ♡</span></div>
         <div class="env-seal">✦</div>
         <div class="env-flap"></div>
@@ -479,7 +629,6 @@
       <span class="env-label">For You, Babu</span>
       <span class="env-hint" id="hint-3">click to open</span>
     </div>
-
   </div>
 </section>
 
@@ -535,6 +684,76 @@
 </div>
 
 <script>
+/* ── LOGIN ── */
+const loginScreen = document.getElementById('loginScreen');
+const loginBtn    = document.getElementById('loginBtn');
+const loginError  = document.getElementById('loginError');
+const mEl = document.getElementById('loginMonth');
+const dEl = document.getElementById('loginDay');
+const yEl = document.getElementById('loginYear');
+
+function autoTab(el, next) {
+  el.addEventListener('input', () => {
+    if (el.value.length >= el.maxLength && next) next.focus();
+  });
+}
+autoTab(mEl, dEl);
+autoTab(dEl, yEl);
+autoTab(yEl, null);
+
+function tryLogin() {
+  const m = parseInt(mEl.value, 10);
+  const d = parseInt(dEl.value, 10);
+  const y = parseInt(yEl.value, 10);
+  if (m === 4 && d === 17 && y === 2026) {
+    loginScreen.classList.add('hide');
+    loginError.classList.remove('show');
+    setTimeout(() => { loginScreen.style.display = 'none'; }, 900);
+  } else {
+    loginError.classList.add('show');
+    mEl.value = ''; dEl.value = ''; yEl.value = '';
+    mEl.focus();
+    setTimeout(() => loginError.classList.remove('show'), 3200);
+  }
+}
+
+loginBtn.addEventListener('click', tryLogin);
+[mEl, dEl, yEl].forEach(el => {
+  el.addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin(); });
+});
+
+/* ── COUNTDOWN ── */
+const startDate = new Date('2026-04-17T00:00:00');
+
+function updateCountdown() {
+  const now  = new Date();
+  const diff = Math.max(0, now - startDate);
+  const totalSecs = Math.floor(diff / 1000);
+  const secs  = totalSecs % 60;
+  const mins  = Math.floor(totalSecs / 60) % 60;
+  const hours = Math.floor(totalSecs / 3600) % 24;
+  const days  = Math.floor(totalSecs / 86400);
+
+  function set(id, val) {
+    const el = document.getElementById(id);
+    const prev = el.textContent;
+    const next = String(val).padStart(2, '0');
+    if (prev !== next) {
+      el.textContent = next;
+      el.classList.remove('tick');
+      void el.offsetWidth;
+      el.classList.add('tick');
+      setTimeout(() => el.classList.remove('tick'), 200);
+    }
+  }
+  set('cd-days',  days);
+  set('cd-hours', hours);
+  set('cd-mins',  mins);
+  set('cd-secs',  secs);
+}
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
 /* ── Flower data ── */
 const flowers = [
   { emoji:"🌹", name:"Red Rose",       msg:"Like this rose, my love for you is timeless — beautiful in full bloom, never wilting, always reaching toward you no matter the season." },
@@ -549,9 +768,9 @@ const flowers = [
 
 /* ── Poem data ── */
 const poems = [
-  { label:"Dear Babu,",   text:"You still shine even when the sky turns cloudy. You always bloom even when the rain starts to pour. And you always keep people warm when the weather turns cold." },
+  { label:"Dear Babu,",  text:"You still shine even when the sky turns cloudy. You always bloom even when the rain starts to pour. And you always keep people warm when the weather turns cold." },
   { label:"Dear Babu,",  text:"You're like a fire that keeps on burning. The sun that keeps on glowing. A cup of coffee giving warmth to keep on going. All these things give off the same certainty and love that you give — even without me asking." },
-  { label:"Dear Babu,", text:"You're always going to be the language I'll keep on learning. A math equation I'll keep on solving. A program I'll keep on coding. And the only person I'll keep on loving." },
+  { label:"Dear Babu,",  text:"You're always going to be the language I'll keep on learning. A math equation I'll keep on solving. A program I'll keep on coding. And the only person I'll keep on loving." },
   { label:"Dear Babu,",  text:"A pen for both you and I — co-authoring each other's life till π. For every page I've turned, you are the one I really yearned." },
 ];
 
@@ -569,7 +788,6 @@ flowers.forEach((f, i) => {
 /* ── Flower popup ── */
 const fOverlay = document.getElementById('fOverlay');
 const fClose   = document.getElementById('fClose');
-
 function openFlower(i) {
   document.getElementById('fEmoji').textContent = flowers[i].emoji;
   document.getElementById('fName').textContent  = flowers[i].name;
@@ -584,11 +802,9 @@ fOverlay.addEventListener('click', e => { if (e.target === fOverlay) closeFlower
 /* ── Envelopes ── */
 const pOverlay = document.getElementById('pOverlay');
 const pClose   = document.getElementById('pClose');
-
 for (let i = 0; i < 4; i++) {
   const env  = document.getElementById('env-' + i);
   const hint = document.getElementById('hint-' + i);
-
   function makeHandler(idx, el, hintEl) {
     return function open() {
       if (!el.classList.contains('open')) {
@@ -600,14 +816,12 @@ for (let i = 0; i < 4; i++) {
       }
     };
   }
-
   const handler = makeHandler(i, env, hint);
   env.addEventListener('click', handler);
   env.addEventListener('keydown', function(e) {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handler(); }
   });
 }
-
 function showPoem(i) {
   document.getElementById('pLabel').textContent = poems[i].label;
   document.getElementById('pText').textContent  = poems[i].text;
@@ -618,7 +832,7 @@ function closePoem() { pOverlay.classList.remove('open'); }
 pClose.addEventListener('click', closePoem);
 pOverlay.addEventListener('click', e => { if (e.target === pOverlay) closePoem(); });
 
-/* ── Shared Escape key ── */
+/* ── Escape key ── */
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closeFlower(); closePoem(); }
 });
